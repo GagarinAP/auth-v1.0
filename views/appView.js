@@ -10,7 +10,7 @@ module.exports = (function () {
     };
 
     var hello = function (params) {               
-        return '';
+        return 'hi';
     }
     
     return {        

@@ -36,15 +36,13 @@ $(function () {
         var showAuthenticatedUserForm = function () {
             $('#login-form').hide();
             $('#user-info').html('<div>Hello, ' + 
-                session.user_name + 
-                '</div>'); 
-            $('#Button').show();           
+                session.user_name + '<button type="submit" class="btn" onclick="window.KeysAppPrivate.hello();"> Out</button>' + 
+                '</div>');                      
         };
 
         var showLoginForm = function () {
             $('#login-form').show();            
-            $('#user-info').html('');
-            $('#Button').hide();            
+            $('#user-info').html('');                      
         };
 
         var hello = function () {
@@ -53,8 +51,9 @@ $(function () {
                 headers: {
                     token: session.token
                 }
-            }).done(function (data) {
-                /*$('#hello').html(data);*/clearSession();
+            }).done(function () {                
+                clearSession();
+                showLoginForm();
             }).fail(function (error) {
                 if (error.status === 401) {
                     clearSession();                    
