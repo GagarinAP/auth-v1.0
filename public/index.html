@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">    
+  </head>
+  <body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">     
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">LOGIN</a>
+      </div>
+     
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">      
+        <form id="login-form" class="navbar-form navbar-right" role="form">
+          <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input id="email" type="login" class="form-control" name="login" value="" placeholder="Email Address">
+          </div>
+        
+          <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+            <input id="password" type="password" class="form-control" name="pw" value="" placeholder="Password">
+          </div>
+        
+          <button type="submit" class="btn btn-primary" onclick="window.KeysAppPrivate.authenticate();">Login</button>            
+        </form>
+        <div id="user-info" class="navbar-form navbar-right"></div>
+        <div id="Button" onclick="window.KeysAppPrivate.hello();">Out</div>
+        
+        <!-- <button type="submit" class="btn btn-primary" onclick="window.KeysAppPrivate.hello();" id="out">Out</button> -->
+        <!-- <div id="hello"></div> -->
+      </div>
+    </div>
+  </nav>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>    
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/private.js"></script>
+  </body>
+</html>
