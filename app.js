@@ -1,135 +1,38 @@
-var bodyParser = require("body-parser");
-var express = require('express');
-var app = express();
-var Users = require('./db/db.json');
-var module      =   require('./module/module.js');
+var express  = require('express');
+var app      = express();
+var path     = require('path');
+var port     = process.env.PORT || 3000;
+var mongoose = require('mongoose');
+var passport = require('passport');
+var flash    = require('connect-flash');
 
-var session = require('express-session');
-var cookieParser = require('cookie-parser');
-
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(session({	
-    name: 'cookie',    
-    proxy: true,
-    resave: true,
-    saveUninitialized: true,
-    secret: 'dgdfgdfTRUUICJKMGHBDF'
-}));
+var configDB = require('./config/database.js');
 
 
-app.use(express.static(__dirname + '/public'));
+mongoose.connect(configDB.url);
 
-/*app.get('/users', function(req,res){
-  res.send(Users);
+require('./config/passport')(passport);
+
+app.configure(function() {
+	app.use(express.logger('dev')); 
+	app.use(express.cookieParser()); 
+	app.use(express.bodyParser()); 
+
+	app.set('view engine', 'ejs');
+	app.use(express.static(path.join(__dirname, 'public')));
+	app.use(express.session({ secret: 'hello' })); 
+	app.use(passport.initialize());
+	app.use(passport.session());
+	app.use(flash());
+	app.use(function (req, res, next) {//Show ip users
+	  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	  console.log('Client IP:', ip);
+	  next();
+	});
 });
 
-app.post('/users', function(req,res){
-	console.log(req.body);
-	var login = req.body.login;
-	var password = req.body.password;
-	res.send(Users.push(req.body));
+require('./app/routes.js')(app, passport); 
+
+app.listen(port, function(){
+	console.log('SERVER run on localhost:' + port);
 });
-
-app.get('/users/:id', function(req, res){	
-	var id = req.params.id;
-	for (var i = 0; i < Users.length; i++) {
-		if(id == Users[i]){
-			return res.send(Users[i]);
-		}
-	};
-	return res.send(400);
-});
-
-app.put("/users/:id", Auth, function(req,res){
-    var id = req.params.id;
-	for (var i = 0; i < Users.length; i++) {
-		if(id == Users[i]){
-			return res.send(Users[i]);
-		}
-	};
-	return res.send(400);   
-});
-
-app.delete("/users/:id", Auth, function(req,res){
-    var id = req.params.id;
-	for (var i = 0; i < Users.length; i++) {
-		if(id == Users[i]){
-			delete Users[i];
-		}
-	};
-	return res.send(400);
-});*/
-app.get('/users', function(req,res){       
-    res.send(module._find());
-});
-
-app.post('/users', function(req,res){
-    res.send(module._save(req.body));        
-});
-
-app.get("/users/:id", function(req,res){
-    res.send(module._findById(req.params.id));
-});
-
-app.put("/users/:id", function(req,res){
-    res.send(module._saveId(req.params.id,req.body));    
-});
-
-app.delete("/users/:id", function(req,res){
-    res.send(module._remove(req.params.id));
-});
-
-
-
-app.get("/session", function(req, res){ 
-	console.log(req.body);
-	if(req.session.user){
-		res.send(200, {
-			auth : true,
-			user : req.session.user
-		});
-	}else{
-		res.send(401, {
-			auth : false			
-		});
-	}
-});
-
-app.post("/session/login", function(req, res){ 
-	//console.log(Users[1]);
-	//console.log('Cookies: ', req.cookies);
-	var login = req.body.login;
-	var password = req.body.password;
-	for (var i = 0; i < Users.length; i++) {
-		var user = Users[i];
-		if(user.login == login && user.password == password){
-			req.session.user = user;
-			return res.send(200, {
-				auth : true,
-				user : user
-			});
-		}
-	};
-	return res.send(401);
-});
-
-
-app.delete("/logout", function(req, res){ 
-	req.session.user = null;	
-});
-
-function Auth (req, res, next) {
-	if(req.session.user){
-		next();
-	}else{
-		res.send(401,{
-			flash : 'Plase log in first'
-		});
-	}
-}
-
-app.listen(3000, function(){
-  console.log('Server run in 3000 port');
-})
